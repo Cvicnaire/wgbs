@@ -1,0 +1,33 @@
+# Bismark WDL file
+
+version 1.0
+
+# bismark task
+
+task bismark {
+
+    input { 
+    File fastq_file1
+    File fastq_file2 
+    Directory inputDir
+    String base = basename(fastq_file, ".fastq.gz")
+    String dockerImage = "quay.io/biocontainers/bismark:0.24.2--hdfd78af_0"
+    }
+
+command {
+    /usr/bin/local/opt/bismark:0.24.2 bismark \
+    --genome ${inputDir}\
+    -1 {fastq_file1}\
+    -2 {fastq_file2}
+
+}
+    
+output {
+
+}
+
+runtime {
+
+    docker: dockerImage
+}
+}
