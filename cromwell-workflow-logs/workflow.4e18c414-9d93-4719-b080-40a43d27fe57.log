@@ -1,0 +1,1272 @@
+2024-07-17 09:54:43,835 INFO  - MaterializeWorkflowDescriptorActor [UUID(4e18c414)]: Parsing workflow as WDL 1.0
+2024-07-17 09:54:44,267 INFO  - MaterializeWorkflowDescriptorActor [UUID(4e18c414)]: Call-to-Backend assignments: wgbs_workflow.bismark -> Local, wgbs_workflow.FastQC2 -> Local, wgbs_workflow.FastQC1 -> Local
+2024-07-17 09:54:48,625 INFO  - WorkflowExecutionActor-4e18c414-9d93-4719-b080-40a43d27fe57 [UUID(4e18c414)]: Starting wgbs_workflow.FastQC1 (9 shards), wgbs_workflow.bismark (9 shards), wgbs_workflow.FastQC2 (9 shards)
+2024-07-17 09:54:55,268 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:0:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0/inputs/-349829066/SRR7830277_2.fastq.gz`
+2024-07-17 09:54:55,296 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:0:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-0/execution/script
+2024-07-17 09:54:55,329 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:1:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1/inputs/-349829066/SRR7830270_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1/inputs/-349829066/SRR7830270_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:54:55,338 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:1:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-1/execution/script
+2024-07-17 09:54:55,390 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:6:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6/inputs/-349829066/SRR7830280_1.fastq.gz`
+2024-07-17 09:54:55,401 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:6:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-6/execution/script
+2024-07-17 09:54:55,402 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:1:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1/inputs/-349829066/SRR7830270_1.fastq.gz`
+2024-07-17 09:54:55,408 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:1:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-1/execution/script
+2024-07-17 09:54:55,437 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:8:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8/inputs/-349829066/SRR7830281_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8/inputs/-349829066/SRR7830281_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:54:55,446 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:8:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-8/execution/script
+2024-07-17 09:54:55,449 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:7:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7/inputs/-349829066/SRR7830275_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7/inputs/-349829066/SRR7830275_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:54:55,454 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:7:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-7/execution/script
+2024-07-17 09:54:55,484 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:5:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5/inputs/-349829066/SRR7830274_1.fastq.gz`
+2024-07-17 09:54:55,490 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:5:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-5/execution/script
+2024-07-17 09:54:55,499 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:6:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6/inputs/-349829066/SRR7830280_2.fastq.gz`
+2024-07-17 09:54:55,506 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:6:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-6/execution/script
+2024-07-17 09:54:55,530 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:4:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4/inputs/-349829066/SRR7830279_1.fastq.gz`
+2024-07-17 09:54:55,536 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:4:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-4/execution/script
+2024-07-17 09:54:55,541 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:8:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8/inputs/-349829066/SRR7830281_1.fastq.gz`
+2024-07-17 09:54:55,547 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:8:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-8/execution/script
+2024-07-17 09:54:55,595 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:2:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2/inputs/-349829066/SRR7830278_2.fastq.gz`
+2024-07-17 09:54:55,603 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:2:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-2/execution/script
+2024-07-17 09:54:55,653 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:0:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0/inputs/-349829066/SRR7830277_1.fastq.gz`
+2024-07-17 09:54:55,657 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:0:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-0/execution/script
+2024-07-17 09:54:55,751 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:2:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2/inputs/-349829066/SRR7830278_1.fastq.gz`
+2024-07-17 09:54:55,758 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:2:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-2/execution/script
+2024-07-17 09:54:55,771 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:3:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3/inputs/-349829066/SRR7830276_2.fastq.gz`
+2024-07-17 09:54:55,776 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:3:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-3/execution/script
+2024-07-17 09:54:55,786 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:7:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7/inputs/-349829066/SRR7830275_1.fastq.gz`
+2024-07-17 09:54:55,792 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:7:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-7/execution/script
+2024-07-17 09:54:55,858 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:5:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5/inputs/-349829066/SRR7830274_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5/inputs/-349829066/SRR7830274_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:54:55,861 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:5:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-5/execution/script
+2024-07-17 09:54:55,871 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:8:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8/inputs/-349829066/SRR7830281_2.fastq.gz`
+2024-07-17 09:54:55,877 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:8:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-8/execution/script
+2024-07-17 09:54:55,895 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:4:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4/inputs/-349829066/SRR7830279_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4/inputs/-349829066/SRR7830279_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:54:55,901 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:4:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-4/execution/script
+2024-07-17 09:54:55,914 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:5:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5/inputs/-349829066/SRR7830274_2.fastq.gz`
+2024-07-17 09:54:55,918 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:5:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-5/execution/script
+2024-07-17 09:54:55,938 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:1:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1/inputs/-349829066/SRR7830270_2.fastq.gz`
+2024-07-17 09:54:55,941 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:1:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-1/execution/script
+2024-07-17 09:54:58,508 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:0:1]: job id: 806147
+2024-07-17 09:54:58,510 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:6:1]: job id: 806301
+2024-07-17 09:54:58,511 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:1:1]: job id: 806216
+2024-07-17 09:54:58,511 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:1:1]: job id: 806555
+2024-07-17 09:54:58,511 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:0:1]: job id: 806389
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:2:1]: job id: 806413
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:4:1]: job id: 806322
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:5:1]: job id: 806282
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:3:1]: job id: 806430
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:5:1]: job id: 806473
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:4:1]: job id: 806518
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:2:1]: job id: 806368
+2024-07-17 09:54:58,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:7:1]: job id: 806447
+2024-07-17 09:54:58,513 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:5:1]: job id: 806536
+2024-07-17 09:54:58,515 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:1:1]: job id: 806169
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:4:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:1:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:0:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:5:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:6:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:1:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:3:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:2:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:0:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:1:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:5:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:2:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:4:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,517 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:7:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,518 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:5:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,523 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:6:1]: job id: 806209
+2024-07-17 09:54:58,524 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:6:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,528 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:8:1]: job id: 806246
+2024-07-17 09:54:58,528 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:8:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,529 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:8:1]: job id: 806487
+2024-07-17 09:54:58,533 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:7:1]: job id: 806258
+2024-07-17 09:54:58,534 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:7:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,547 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:8:1]: job id: 806332
+2024-07-17 09:54:58,549 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:8:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:54:58,549 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:8:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:03,769 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:7:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7/inputs/-349829066/SRR7830275_2.fastq.gz`
+2024-07-17 09:55:03,774 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:7:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-7/execution/script
+2024-07-17 09:55:03,787 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:4:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4/inputs/-349829066/SRR7830279_2.fastq.gz`
+2024-07-17 09:55:03,795 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:4:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC2 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC2/shard-4/execution/script
+2024-07-17 09:55:03,843 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:3:1]: `/usr/local/bin/fastqc -o . /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3/inputs/-349829066/SRR7830276_1.fastq.gz`
+2024-07-17 09:55:03,850 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:3:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 \
+echo "successfully pulled quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "1" != "1" ];
+then
+    PE="-pe omp 1"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_FastQC1 \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3 \
+      docker://quay.io/biocontainers/fastqc@sha256:e194048df39c3145d9b4e0a14f4da20b59d59250465b6f2a9cb698445fd45900 /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-FastQC1/shard-3/execution/script
+2024-07-17 09:55:03,875 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:2:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2/inputs/-349829066/SRR7830278_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2/inputs/-349829066/SRR7830278_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:55:03,880 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:2:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-2/execution/script
+2024-07-17 09:55:03,921 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:0:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0/inputs/-349829066/SRR7830277_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0/inputs/-349829066/SRR7830277_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:55:03,925 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:0:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-0/execution/script
+2024-07-17 09:55:03,966 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:3:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3/inputs/-349829066/SRR7830276_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3/inputs/-349829066/SRR7830276_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:55:03,972 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:3:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-3/execution/script
+2024-07-17 09:55:04,014 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:6:1]: `/usr/local/bin/bismark \
+--genome /projectnb/bubhub/users/camv/idx/GRCH38/ \
+-1 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6/inputs/-349829066/SRR7830280_1.fastq.gz \
+-2 /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6/inputs/-349829066/SRR7830280_2.fastq.gz \ 
+bismark2summary`
+2024-07-17 09:55:04,020 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:6:1]: executing: # Make sure the SINGULARITY_CACHEDIR variable is set. If not use a default
+# based on the users home.
+if [ -z $SINGULARITY_CACHEDIR ]; 
+    then CACHE_DIR=$HOME/.singularity/cache
+    else CACHE_DIR=$SINGULARITY_CACHEDIR
+fi
+# Make sure cache dir exists so lock file can be created by flock
+mkdir -p $CACHE_DIR  
+LOCK_FILE=$CACHE_DIR/singularity_pull_flock
+# Create an exclusive filelock with flock. --verbose is useful for 
+# for debugging, as is the echo command. These show up in `stdout.submit`.
+flock --verbose --exclusive --timeout 900 $LOCK_FILE \
+singularity exec --containall docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f \
+echo "successfully pulled quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f!"
+
+# set up our bind mounts
+BIND="--bind /projectnb:/projectnb"
+if [ -d /restricted ]; then
+    BIND="$BIND --bind /restricted:/restricted"
+fi
+
+# configure requesting multiple slots
+PE=
+if [ "10" != "1" ];
+then
+    PE="-pe omp 10"
+fi
+
+qsub \
+  -terse \
+  -V \
+  -b y \
+  -N cromwell_4e18c414_bismark \
+  -wd /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6 \
+  -o /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6/execution/stdout.qsub \
+  -e /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6/execution/stderr.qsub \
+  $PE \
+  -P bubhub \
+  singularity exec --containall $BIND \
+      --bind /projectnb/bubhub/cromwell/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6:/cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6 \
+      docker://quay.io/biocontainers/bismark@sha256:b06de320ad1ac9057e404105eac58587e2d5f076b62f146c11259dadfe07e20f /bin/bash \
+      /cromwell-executions/wgbs_workflow/4e18c414-9d93-4719-b080-40a43d27fe57/call-bismark/shard-6/execution/script
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:3:1]: job id: 808286
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:6:1]: job id: 808374
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:2:1]: job id: 808314
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:3:1]: job id: 808355
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:0:1]: job id: 808338
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:7:1]: job id: 808216
+2024-07-17 09:55:08,491 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:4:1]: job id: 808240
+2024-07-17 09:55:08,492 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:0:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:08,492 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:6:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:08,492 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:3:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:08,492 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:3:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:08,492 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.bismark:2:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:08,493 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:7:1]: Status change from - to WaitingForReturnCode
+2024-07-17 09:55:08,493 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:4:1]: Status change from - to WaitingForReturnCode
+2024-07-17 10:00:55,745 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:6:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:03,063 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:3:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:10,451 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:6:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:21,271 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:3:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:23,060 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:2:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:34,601 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:1:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:35,211 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:4:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:52,630 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:1:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:54,520 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:8:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:01:58,640 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:2:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:08,280 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:8:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:16,512 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:0:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:16,572 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:5:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:17,970 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:7:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:30,113 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:7:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:51,660 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:5:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:02:52,281 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC1:4:1]: Status change from WaitingForReturnCode to Done
+2024-07-17 10:05:10,711 INFO  - BackgroundConfigAsyncJobExecutionActor [UUID(4e18c414)wgbs_workflow.FastQC2:0:1]: Status change from WaitingForReturnCode to Done

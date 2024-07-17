@@ -25,5 +25,6 @@ task bismark {
 
     runtime {
         docker: dockerImage
+        cpu: 10 
     }
 }

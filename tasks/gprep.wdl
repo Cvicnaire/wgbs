@@ -1,5 +1,5 @@
 version 1.0
-
+# this should work
 workflow bismark_workflow {
     input {
         File genome_file

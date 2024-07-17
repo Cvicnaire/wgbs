@@ -1,18 +1,36 @@
 version 1.0
-
-task bismark {
+# this should work
+workflow bismark_workflow {
     input {
         File genome_file
-        String genome_dir = dirname(genome_file)
         String dockerImage = "quay.io/biocontainers/bismark:0.24.2--hdfd78af_0"
     }
 
-    command {
-        /usr/local/bin/bismark_genome_preparation ${genome_dir}
+    call prepare_genome {
+        input:
+            genome_file = genome_file,
+            dockerImage = dockerImage
     }
 
     output {
-        File bismark_output = "${genome_dir}/Bisulfite_Genome"
+        File bisulfite_genome_file = prepare_genome.bisulfite_genome_file
+    }
+}
+
+task prepare_genome {
+    input {
+        File genome_file
+        String dockerImage
+    }
+
+    command {
+         # Find the path to the bismark executable
+        which bismark
+        /bismark_genome_preparation ${genome_file}
+    }
+
+    output {
+        File bisulfite_genome_file = "${genome_file}/Bisulfite_Genome/"
     }
 
     runtime {

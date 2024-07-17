@@ -37,7 +37,6 @@ workflow wgbs_workflow {
 
     output {
         Array[File] bismark_outputs = bismark.bismark_output
-        Array[File] fastqc_reports1 = FastQC1.fastqc_report
-        Array[File] fastqc_reports2 = FastQC2.fastqc_report
-    }
+        Array[File] fastqc_reports = flatten([FastQC1.fastqc_report, FastQC2.fastqc_report])
+            }
 }
